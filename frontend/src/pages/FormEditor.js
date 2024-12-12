@@ -29,7 +29,7 @@ const FormEditor = () => {
         }
 
         try {
-            const response = await axios.post('http://localhost:5000/api/forms', form);
+            const response = await axios.post('https://form-builder-mern-stack.onrender.com', form);
             alert('Form saved successfully!');
             console.log('Saved Form:', response.data);
         } catch (error) {
