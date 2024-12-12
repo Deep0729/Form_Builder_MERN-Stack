@@ -9,7 +9,7 @@ const FormFill = () => {
 
     useEffect(() => {
         const fetchForm = async () => {
-            const response = await axios.get(`http://localhost:5000/api/forms/${id}`);
+            const response = await axios.get(`https://form-builder-mern-stack.onrender.com/${id}`);
             setForm(response.data);
         };
         fetchForm();
