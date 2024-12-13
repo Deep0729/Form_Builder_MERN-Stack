@@ -6,11 +6,18 @@ const FormFill = () => {
     const { id } = useParams();
     const [form, setForm] = useState(null);
     const [answers, setAnswers] = useState({});
+    const [error, setError] = useState('');
+    const [success, setSuccess] = useState('');
 
     useEffect(() => {
         const fetchForm = async () => {
-            const response = await axios.get(`https://form-builder-mern-stack.onrender.com/${id}`);
-            setForm(response.data);
+            try{
+                const response = await axios.get(`https://form-builder-mern-stack.onrender.com/api/forms/${id}`);
+                setForm(response.data);
+            } catch (err) {
+            console.error('Error fetching form:', err);
+            setError('Failed to load the form. Please try again later.');
+            }
         };
         fetchForm();
     }, [id]);
@@ -84,23 +91,50 @@ const FormFill = () => {
         }
     };
 
+    const submitAnswers = async () => {
+        try {
+            setError('');
+            setSuccess('');
+            const response = await axios.post(`https://form-builder-mern-stack.onrender.com/api/forms/${id}/responses`, {
+                answers,
+            });
+            setSuccess('Your responses have been submitted successfully!');
+            console.log('Submission Response:', response.data);
+        } catch (err) {
+            console.error('Error submitting answers:', err);
+            setError('Failed to submit your responses. Please try again.');
+        }
+    };
+
     return (
-        <div>
-            {form && (
+        <div className="p-6 bg-gray-50 min-h-screen">
+            {error && <div className="text-red-500 mb-4">{error}</div>}
+            {success && <div className="text-green-500 mb-4">{success}</div>}
+
+            {form ? (
                 <div>
-                    <h1>{form.title}</h1>
+                    <h1 className="text-2xl font-bold mb-4">{form.title}</h1>
+                    {form.headerImage && (
+                        <img
+                            src={form.headerImage}
+                            alt="Form Header"
+                            className="w-full max-h-64 object-cover rounded-md mb-6"
+                        />
+                    )}
                     {form.questions.map((q, index) => renderQuestion(q, index))}
                     <button
-                        onClick={() => {
-                            console.log(answers); // Save or submit the answers
-                        }}
+                        onClick={submitAnswers}
+                        className="bg-blue-500 text-white px-4 py-2 rounded-md mt-4"
                     >
                         Submit
                     </button>
                 </div>
+            ) : (
+                <div>Loading form...</div>
             )}
         </div>
     );
 };
+
 
 export default FormFill;

@@ -29,12 +29,13 @@ const FormEditor = () => {
         }
 
         try {
-            const response = await axios.post('https://form-builder-mern-stack.onrender.com', form);
+            const response = await axios.post('https://form-builder-mern-stack.onrender.com/api/forms', form);
             alert('Form saved successfully!');
             console.log('Saved Form:', response.data);
+            createNewForm();
         } catch (error) {
-            console.error('Error saving form:', error);
-            alert('Failed to save form. Please try again.');
+            console.error('Error saving form:', error.response?.data || error.message);
+            alert(error.response?.data?.message || 'Failed to save form. Please try again.');
         }
     };
 
